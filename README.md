@@ -29,13 +29,35 @@ data-structures-and-algorithms/
 │   │   ├── bubble_sort.cpp
 │   │   ├── merge_sort.cpp
 │   │   └── quick_sort.cpp
+│   │
 │   ├── searching/
 │   │   ├── binary_search.cpp
 │   │   └── linear_search.cpp
+│   │
 │   ├── dynamic_programming/
 │   │   ├── knapsack.cpp
 │   │   └── fibonacci.cpp
+│   │
+│   ├── recursion/
+│   │   ├── factorial.cpp
+│   │   ├── tower_of_hanoi.cpp
+│   │   └── generate_subsets.cpp
+│   │
 │   └── ...
+│
+├── leetcode/
+│   ├── easy/
+│   │   ├── two_sum.cpp
+│   │   ├── valid_parentheses.cpp
+│   │   └── ...
+│   ├── medium/
+│   │   ├── add_two_numbers.cpp
+│   │   ├── longest_substring.cpp
+│   │   └── ...
+│   ├── hard/
+│   │   ├── median_of_two_sorted_arrays.cpp
+│   │   └── ...
+│   └── README.md
 │
 ├── utils/
 │   ├── io_helper.cpp
