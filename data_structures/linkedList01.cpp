@@ -144,6 +144,22 @@ void print(node a) {
     std::cout << std::endl;
 }
 
+// Selection sort
+void sort(const node &a) {
+    for (node p = a; p->next != nullptr; p = p->next) {
+        node min = p;
+        for (node q = p->next; q != nullptr; q = q->next) {
+            if (q->data < min->data) {
+                min = q;
+            }
+        }
+
+        const int tmp = min->data;
+        min->data = p->data;
+        p->data = tmp;
+    }
+}
+
 int main(int argc, char *argv[]) {
     node head = nullptr;
     int x, pos;
@@ -157,7 +173,8 @@ int main(int argc, char *argv[]) {
         std::cout << "5. Delete at end" << std::endl;
         std::cout << "6. Delete middle" << std::endl;
         std::cout << "7. Print linked list to screen" << std::endl;
-        std::cout << "8. Exit" << std::endl;
+        std::cout << "8. Sort Linked list" << std::endl;
+        std::cout << "9. Exit" << std::endl;
         std::cout << "Enter your choice: ";
         std::cin >> selection;
         switch (selection) {
@@ -193,6 +210,9 @@ int main(int argc, char *argv[]) {
                 print(head);
                 break;
             case 8:
+                sort(head);
+                break;
+            case 9:
                 exit(0);
             default:
                 std::cout << "Wrong choice!" << std::endl;
