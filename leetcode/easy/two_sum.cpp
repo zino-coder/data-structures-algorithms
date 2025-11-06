@@ -21,23 +21,23 @@ vector<int> twoSum(const vector<int> &nums, const int target) {
     return {};
 }
 
-void initArray(std::vector<int> &arr, int &n) {
-    std::cout << "Input n=";
-    std::cin >> n;
+void initArray(vector<int> &arr, int &n) {
+    cout << "Input n=";
+    cin >> n;
 
     arr.resize(n);
     for (int i = 0; i < n; i++) {
-        std::cout << "a[" << i << "]=";
-        std::cin >> arr[i];
+        cout << "a[" << i << "]=";
+        cin >> arr[i];
     }
 }
 
-void printArray(const std::vector<int> &arr) {
-    for (const int i : arr) {
-        std::cout << i << " ";
+void printArray(const vector<int> &arr) {
+    for (const int i: arr) {
+        cout << i << " ";
     }
 
-    std::cout << std::endl;
+    cout << endl;
 }
 
 int main(int argc, char *argv[]) {
