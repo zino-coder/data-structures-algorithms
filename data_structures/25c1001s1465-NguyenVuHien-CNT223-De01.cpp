@@ -16,7 +16,7 @@ struct TaiNghe {
     long long DonGia;
     int SoLuong;
 
-    long long ThanhTien() const {
+    [[nodiscard]] long long ThanhTien() const {
         return DonGia * 1LL * SoLuong;
     }
 };
@@ -45,12 +45,12 @@ node createNode(const TaiNghe &taiNghe) {
     return p;
 }
 
-bool isEmpty(List &l) {
+bool isEmpty(const List &l) {
     return l.head == nullptr;
 }
 
 void pushBack(List &l, const TaiNghe &taiNghe) {
-    node p = createNode(taiNghe);
+    const node p = createNode(taiNghe);
     if (isEmpty(l)) {
         l.head = l.tail = p;
     } else {
@@ -70,7 +70,7 @@ void clearList(List &l) {
     l.head = l.tail = nullptr;
 }
 
-void updateTail(List &l, const TaiNghe &taiNghe) {
+void updateTail(List &l) {
     l.tail = l.head;
 
     if (l.tail == nullptr) return;
@@ -80,8 +80,63 @@ void updateTail(List &l, const TaiNghe &taiNghe) {
 }
 
 void pressEnter() {
-    cout << "\nNhan Enter de tiep tuc...";
+    cout << endl << "Nhan Enter de tiep tuc...";
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
+}
+
+//================MERGE SORT======================
+void splitList(node source, node* front, node* back) {
+    if (source == nullptr || source->next == nullptr) {
+        *front = source;
+        *back = nullptr;
+
+        return;
+    }
+
+    node slow = source;
+    node fast = source->next;
+
+    while (fast != nullptr) {
+        fast = fast->next;
+        if (fast != nullptr) {
+            slow = slow->next;
+            fast = fast->next;
+        }
+    }
+
+    *front = source;
+    *back = slow->next;
+    slow->next = nullptr;
+}
+
+node merge(node a, node b) {
+    if (a == nullptr) return b;
+    if (b == nullptr) return a;
+
+     node result = nullptr;
+
+    if (a->data.DonGia <= b->data.DonGia) {
+        result = a;
+        result->next = merge(a->next, b);
+    } else {
+        result = b;
+        result->next = merge(a, b->next);
+    }
+
+    return result;
+}
+
+void mergeSort(node* head) {
+    const node h = *head;
+    if (h == nullptr || h->next == nullptr) return;
+
+    node a = nullptr;
+    node b = nullptr;
+
+    splitList(h, &a, &b);
+    mergeSort(&a);
+    mergeSort(&b);
+    *head = merge(a, b);
 }
 
 //================================================================
@@ -122,7 +177,7 @@ void inputList(List &l) {
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
     for (int i = 0; i < n; i++) {
-        cout << "\n--- Nhap tai nghe thu " << i + 1 << " ---\n";
+        cout << "- << endl-- Nhap tai nghe thu " << i + 1 << " ---" << endl;
         TaiNghe x = inputSingleHeadphone();
         pushBack(l, x);
     }
@@ -166,7 +221,7 @@ void printOneSQL(const TaiNghe &x) {
 
 void printListSQL(List &l) {
     if (isEmpty(l)) {
-        cout << "Danh sach rong!\n";
+        cout << "Danh sach rong!" << endl;
         return;
     }
 
@@ -175,6 +230,79 @@ void printListSQL(List &l) {
         printOneSQL(p->data);
     }
     printLine();
+}
+
+// Yeu cau 3: Tim kiem!
+void searchByName(List &l, const string &ten) {
+    if (isEmpty(l)) {
+        cout << "Danh sach rong!" << endl;
+
+        return;
+    }
+
+    bool found = false;
+    printHeaderSQL();
+    for (const Node* p = l.head; p != nullptr; p = p->next) {
+        if (p->data.TenTaiNghe == ten) {
+            printOneSQL(p->data);
+            found = true;
+        }
+    }
+
+    if (!found) {
+        cout << "Khong tim thay tai nghe co ten la: " << ten << endl;
+    }
+}
+
+// Yeu cau 4: sap xep
+    void sortByDonGia(List &l) {
+    mergeSort(&l.head);
+    updateTail(l);
+}
+
+// Yeu cau 5:
+long long totalMoney(const List &l) {
+    long long total = 0;
+    for (node p = l.head; p != nullptr; p = p->next) {
+        total += p->data.ThanhTien();
+    }
+
+    return total;
+}
+
+// Yeu cau 6: Tim tai nghe co down gia cao hon 250000
+void getNameHeadphoneCondition(const List &l, long long price = 250000) {
+    bool found = false;
+    for (node p = l.head; p != nullptr; p = p->next) {
+        if (p->data.DonGia > price) {
+            cout << "- " << p->data.TenTaiNghe << " (" << p->data.DonGia << ")" << endl;
+            found = true;
+        }
+    }
+
+    if (!found) {
+        cout << "Khong tim thay tai nghe nao co don gia cao hon " << price << endl;
+    }
+}
+
+void getDetailHeadphoneMaxPrice(const List &l) {
+    if (isEmpty(l)) {
+        cout << "Danh sach rong!" << endl;
+
+        return;
+    }
+
+    node maxNode = l.head;
+    for (node p = l.head; p != nullptr; p = p->next) {
+        if (p->data.DonGia > maxNode->data.DonGia) {
+            maxNode = p;
+        }
+    }
+
+    cout << "Tai nghe co don gia cao nhat la: " << endl;
+    cout << "===============================================" << endl;
+    printHeaderSQL();
+    printOneSQL(maxNode->data);
 }
 
 // ================== MENU ==================
@@ -212,7 +340,7 @@ void addDemoData(List &l) {
         pushBack(l, x);
     }
 
-    cout << "Da nap demo data thanh cong!\n";
+    cout << "Da nap demo data thanh cong!" << endl;
 }
 
 int main(int argc, char *argv[]) {
@@ -233,56 +361,57 @@ int main(int argc, char *argv[]) {
             case 1: {
                 clearList(l);
                 inputList(l);
-                cout << "Nhap danh sach thanh cong!\n";
+                cout << "Nhap danh sach thanh cong!" << endl;
                 pressEnter();
                 break;
             }
             case 2: {
-                cout << "\n--- DANH SACH TAI NGHE ---\n";
+                cout << endl << "--- DANH SACH TAI NGHE ---" << endl;
                 printListSQL(l);
                 pressEnter();
                 break;
             }
-            // case 3: {
-            //     string ten;
-            //     cout << "Nhap ten tai nghe can tim: ";
-            //     getline(cin, ten);
-            //     cout << "\n--- KET QUA TIM KIEM ---\n";
-            //     searchByName(l, ten);
-            //     pressEnter();
-            //     break;
-            // }
-            // case 4: {
-            //     sortByDonGiaAsc_MergeSort(l);
-            //     cout << "Da sap xep tang dan theo don gia (Merge Sort - de quy)!\n";
-            //     pressEnter();
-            //     break;
-            // }
-            // case 5: {
-            //     cout << "Tong tien cac tai nghe: " << totalMoney(l) << " dong\n";
-            //     pressEnter();
-            //     break;
-            // }
-            // case 6: {
-            //     cout << "Cac tai nghe co don gia > 250000:\n";
-            //     showNameDonGiaGreater(l, 250000);
-            //     pressEnter();
-            //     break;
-            // }
-            // case 7: {
-            //     showMaxDonGia(l);
-            //     pressEnter();
-            //     break;
-            // }
+            case 3: {
+                string ten;
+                cout << "Nhap ten tai nghe can tim: ";
+                getline(cin, ten);
+                cout << endl << "--- KET QUA TIM KIEM ---" << endl;
+                searchByName(l, ten);
+                pressEnter();
+                break;
+            }
+            case 4: {
+                sortByDonGia(l);
+                cout << "Da sap xep tang dan theo don gia (Merge Sort - de quy)!" << endl;
+                pressEnter();
+                break;
+            }
+            case 5: {
+                cout << "Tong tien cac tai nghe: " << totalMoney(l) << " dong" << endl;
+                pressEnter();
+                break;
+            }
+            case 6: {
+                constexpr int findingPrice = 250000;
+                cout << "Cac tai nghe co don gia > 250000:" << endl;
+                getNameHeadphoneCondition(l, findingPrice);
+                pressEnter();
+                break;
+            }
+            case 7: {
+                getDetailHeadphoneMaxPrice(l);
+                pressEnter();
+                break;
+            }
             case 0:
-                cout << "Cam on ban da su dung ung dung! Hen gap lai!!.\n";
+                cout << "Cam on ban da su dung ung dung! Hen gap lai!!." << endl;
                 break;
             case 99:
                 addDemoData(l);
                 pressEnter();
                 break;
             default:
-                cout << "Lua chon khong hop le!\n";
+                cout << "Lua chon khong hop le!" << endl;
                 pressEnter();
         }
     } while (choice != 0);
